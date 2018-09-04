@@ -7,11 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <include
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        layout="@layout/toolbar"
+        android:id="@+id/main_toolbar" />
+
    <android.support.v7.widget.RecyclerView
        android:id="@+id/messages_list"
        app:layout_constraintLeft_toLeftOf="parent"
        app:layout_constraintRight_toRightOf="parent"
-       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintTop_toBottomOf="@id/main_toolbar"
        app:layout_constraintBottom_toTopOf="@id/input_holder"
        android:layout_width="0dp"
        android:layout_height="0dp" />

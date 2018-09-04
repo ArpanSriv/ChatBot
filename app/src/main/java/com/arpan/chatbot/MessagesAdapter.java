@@ -11,10 +11,12 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessagesHolder> {
+public class MessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     ArrayList<Message> mMessages;
     Context mContext;
+    private int MESSAGE_TYPE_RECIEVED = 1;
+    private int MESSAGE_TYPE_SENT = 2;
 
     public MessagesAdapter (Context context, ArrayList<Message> messages) {
         mMessages = messages;
@@ -23,37 +25,93 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     @NonNull
     @Override
-    public MessagesHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_message, parent, false);
-        MessagesHolder messagesHolder = new MessagesHolder(v);
-        return messagesHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        if (viewType == MESSAGE_TYPE_RECIEVED) {
+            //Inflate the item_message_recieved.xml
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_message_recieved, parent, false);
+            RecyclerView.ViewHolder recievedViewHolder = new RecievedViewHolder(view);
+            return recievedViewHolder;
+        }
+
+        else {
+            //Inflate the item_message_sent.xml
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_message_sent, parent, false);
+            RecyclerView.ViewHolder sentViewHolder = new SentViewHolder(view);
+            return sentViewHolder;
+        }
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessagesHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
         Message currentMessage = mMessages.get(position);
 
-        holder.senderTV.setText(currentMessage.getSenderName());
-        holder.messageTV.setText(currentMessage.getMessageContent());
+        if (holder.getItemViewType() == MESSAGE_TYPE_RECIEVED) {
+            //Bind Data to Received VH
+            RecievedViewHolder rHolder = (RecievedViewHolder) holder;
+
+            rHolder.messageContentTV.setText(currentMessage.getMessageContent());
+            rHolder.timeTV.setText("14:00");
+        }
+
+        else {
+            //Bind Data to Sent VH
+            SentViewHolder sHolder = (SentViewHolder) holder;
+
+
+            sHolder.timeTV.setText("15:00");
+            sHolder.messageContentTV.setText(currentMessage.getMessageContent());
+        }
+
     }
 
     @Override
     public int getItemCount() {
-       return mMessages.size();
+        return mMessages.size();
     }
 
-    public class MessagesHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemViewType(int position) {
 
-        TextView senderTV;
-        TextView messageTV;
+        Message currentMessage = mMessages.get(position);
 
-        public MessagesHolder(View itemView) {
+        if (currentMessage.getSenderName().equals("Bot")) {
+            return MESSAGE_TYPE_RECIEVED;
+        }
+
+        else {
+            return MESSAGE_TYPE_SENT;
+        }
+
+    }
+
+    public class RecievedViewHolder extends RecyclerView.ViewHolder {
+
+        TextView messageContentTV;
+        TextView timeTV;
+
+        public RecievedViewHolder(View itemView) {
             super(itemView);
 
-            senderTV = itemView.findViewById(R.id.sender_tv);
-            messageTV = itemView.findViewById(R.id.message_tv);
-
+            messageContentTV = itemView.findViewById(R.id.message_textview);
+            timeTV = itemView.findViewById(R.id.time_textview);
         }
     }
+
+    public class SentViewHolder extends RecyclerView.ViewHolder {
+
+        TextView messageContentTV;
+        TextView timeTV;
+
+        public SentViewHolder(View itemView) {
+            super(itemView);
+
+            messageContentTV = itemView.findViewById(R.id.text_message_body);
+            timeTV = itemView.findViewById(R.id.text_message_time);
+        }
+    }
+
 
 }
